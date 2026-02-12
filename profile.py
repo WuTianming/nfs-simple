@@ -62,8 +62,19 @@ pc.defineParameter("nfsSize", "Size of NFS Storage",
                    portal.ParameterType.STRING, "200GB",
                    longDescription="Size of disk partition to allocate on NFS server")
 
+# Optional physical type for all nodes.
+pc.defineParameter("phystype",  "Optional physical node type",
+                   portal.ParameterType.NODETYPE, "",
+                   longDescription="Pick a single physical node type (pc3000,d710,etc) " +
+                   "instead of letting the resource mapper choose for you.")
+
 # Always need this when using parameters
 params = pc.bindParameters()
+
+if params.phystype != "":
+    tokens = params.phystype.split(",")
+    if len(tokens) != 1:
+        pc.reportError(portal.ParameterError("Only a single type is allowed", ["phystype"]))
 
 # The NFS network. All these options are required.
 nfsLan = request.LAN(nfsLanName)
